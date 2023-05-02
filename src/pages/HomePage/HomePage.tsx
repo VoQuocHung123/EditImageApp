@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Button from "../../components/Button/Button";
+import Modal from "../../components/Modal/Modal";
 
 function HomePage() {
   const [activeBtnFilter, setActiveBtnFilter] = useState(0);
@@ -7,13 +8,18 @@ function HomePage() {
   const [previewImage, setPreviewImage] = useState("");
   const [disableControlEdit, setDisableControlEdit] = useState(false);
   const [valueSlider, setValueSlider]: any = useState(100);
+  const [openModal,setOpenModal] = useState(false)
   const [optionApplyFilter, setOptionApplyFilter]: any = useState({
     Brightness: 100,
     Saturation: 100,
     Inversion: 0,
     Grayscale: 0,
   });
-  const [optionRotate, setOptionRotate] = useState({rotate: 0 ,flipVertical : 1 , flipHorizontal: 1})
+  const [optionRotate, setOptionRotate] = useState({
+    rotate: 0,
+    flipVertical: 1,
+    flipHorizontal: 1,
+  });
   const handleClickFilters = (e: any, index: number, item: any) => {
     setActiveBtnFilter(index);
     setFilterSelected(item);
@@ -26,14 +32,23 @@ function HomePage() {
     );
   };
   const handleClickRotate = (e: any, index: number, item: any) => {
-    if(index === 0){
-      setOptionRotate({...optionRotate, rotate : optionRotate.rotate+= -90})
-    }else if(index === 1){
-      setOptionRotate({...optionRotate, rotate : optionRotate.rotate+= 90})
-    }else if(index === 2){
-      setOptionRotate({...optionRotate, flipHorizontal: optionRotate.flipHorizontal === 1 ? -1 : 1})
-    }else{
-      setOptionRotate({...optionRotate, flipVertical: optionRotate.flipVertical === 1 ? -1 : 1})
+    if (index === 0) {
+      setOptionRotate({
+        ...optionRotate,
+        rotate: (optionRotate.rotate += -90),
+      });
+    } else if (index === 1) {
+      setOptionRotate({ ...optionRotate, rotate: (optionRotate.rotate += 90) });
+    } else if (index === 2) {
+      setOptionRotate({
+        ...optionRotate,
+        flipHorizontal: optionRotate.flipHorizontal === 1 ? -1 : 1,
+      });
+    } else {
+      setOptionRotate({
+        ...optionRotate,
+        flipVertical: optionRotate.flipVertical === 1 ? -1 : 1,
+      });
     }
   };
   const handleClickResetFilters = () => {
@@ -42,19 +57,28 @@ function HomePage() {
       Saturation: 100,
       Inversion: 0,
       Grayscale: 0,
-    })
-    setOptionRotate({rotate: 0 ,flipVertical : 1 , flipHorizontal: 1})
-    setFilterSelected('Brightness')
-    setActiveBtnFilter(0)
-    setValueSlider(100)
-
+    });
+    setOptionRotate({ rotate: 0, flipVertical: 1, flipHorizontal: 1 });
+    setFilterSelected("Brightness");
+    setActiveBtnFilter(0);
+    setValueSlider(100);
+    setOpenModal(false)
   };
   const handleChooseImage = () => {
     const inputChooseImage = document.querySelector(
       ".inputChooseImage"
     ) as HTMLElement;
     inputChooseImage.click();
-    handleClickResetFilters()
+    setOptionApplyFilter({
+      Brightness: 100,
+      Saturation: 100,
+      Inversion: 0,
+      Grayscale: 0,
+    });
+    setOptionRotate({ rotate: 0, flipVertical: 1, flipHorizontal: 1 });
+    setFilterSelected("Brightness");
+    setActiveBtnFilter(0);
+    setValueSlider(100);
   };
   const handleChangeDataSlider = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValueSlider(e.target.value);
@@ -64,24 +88,30 @@ function HomePage() {
     };
     setOptionApplyFilter(newValueSlider);
   };
-  const handleClickSaveImage = () =>{
-    const canvas = document.createElement('canvas')
-    const previewImage:any = document.querySelector('.preview-img')
-    const ctx:any = canvas.getContext('2d')
-    canvas.width = previewImage.naturalWidth
-    canvas.height = previewImage.naturalHeight
-    ctx.filter = `brightness(${optionApplyFilter.Brightness}%) saturate(${optionApplyFilter.Saturation}%) invert(${optionApplyFilter.Inversion}%) grayscale(${optionApplyFilter.Grayscale}%)`
-    ctx.translate(canvas.width/2,canvas.height/2)
-    ctx.scale(optionRotate.flipHorizontal,optionRotate.flipVertical)
-    if(optionRotate.rotate !== 0){
-      ctx.rotate(optionRotate.rotate * Math.PI/180)
+  const handleClickSaveImage = () => {
+    const canvas = document.createElement("canvas");
+    const previewImage: any = document.querySelector(".preview-img");
+    const ctx: any = canvas.getContext("2d");
+    canvas.width = previewImage.naturalWidth;
+    canvas.height = previewImage.naturalHeight;
+    ctx.filter = `brightness(${optionApplyFilter.Brightness}%) saturate(${optionApplyFilter.Saturation}%) invert(${optionApplyFilter.Inversion}%) grayscale(${optionApplyFilter.Grayscale}%)`;
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.scale(optionRotate.flipHorizontal, optionRotate.flipVertical);
+    if (optionRotate.rotate !== 0) {
+      ctx.rotate((optionRotate.rotate * Math.PI) / 180);
     }
-    ctx.drawImage(previewImage, -canvas.width / 2, -canvas.height/2 ,canvas.width,canvas.height)
-    const link = document.createElement('a')
-    link.download = 'image.jpg'
-    link.href = canvas.toDataURL()
-    link.click()
-  }
+    ctx.drawImage(
+      previewImage,
+      -canvas.width / 2,
+      -canvas.height / 2,
+      canvas.width,
+      canvas.height
+    );
+    const link = document.createElement("a");
+    link.download = "image.jpg";
+    link.href = canvas.toDataURL();
+    link.click();
+  };
 
   useEffect(() => {
     if (!previewImage) {
@@ -141,7 +171,7 @@ function HomePage() {
               <label htmlFor="" className="text-sm font-normal">
                 Rotate & Flip
               </label>
-              <div className="flex gap-1 mt-2">
+              <div className="flex gap-1 mt-2 justify-center items-center">
                 {[
                   <i className="bx bx-rotate-left"></i>,
                   <i className="bx bx-rotate-right"></i>,
@@ -167,8 +197,7 @@ function HomePage() {
               alt=""
               className="preview-img w-full h-full object-contain"
               style={{
-                filter:
-                  `brightness(${optionApplyFilter.Brightness}%) saturate(${optionApplyFilter.Saturation}%) invert(${optionApplyFilter.Inversion}%) grayscale(${optionApplyFilter.Grayscale}%)`,
+                filter: `brightness(${optionApplyFilter.Brightness}%) saturate(${optionApplyFilter.Saturation}%) invert(${optionApplyFilter.Inversion}%) grayscale(${optionApplyFilter.Grayscale}%)`,
                 transform: `rotate(${optionRotate.rotate}deg) scale(${optionRotate.flipHorizontal},${optionRotate.flipVertical})`,
               }}
             />
@@ -180,7 +209,7 @@ function HomePage() {
             styleBtn={`${
               disableControlEdit ? "opacity-[0.4] pointer-events-none" : ""
             } border border-red-500 hover:bg-red-500 hover:text-white text-xs text-red-500 w-full md:w-[130px] py-3 rounded-sm transition ease-in-out delay-100`}
-            onClick={handleClickResetFilters}
+            onClick={()=> setOpenModal(true)}
             isSlected={false}
           />
           <div className="w-full md:w-[270px]">
@@ -189,7 +218,7 @@ function HomePage() {
               name=""
               id=""
               className="inputChooseImage hidden"
-              onChange={(e:any) => {
+              onChange={(e: any) => {
                 setPreviewImage(URL.createObjectURL(e.target.files[0]));
               }}
             />
@@ -210,6 +239,16 @@ function HomePage() {
           </div>
         </div>
       </section>
+      <Modal
+        onOpen ={openModal}
+        title=" Are you sure you want to reset everything?"
+        onCancel={() => {
+          setOpenModal(false)
+        }}
+        onAccept={() => {
+          handleClickResetFilters()
+        }}
+      />
     </div>
   );
 }
