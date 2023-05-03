@@ -4,6 +4,7 @@ import Modal from "../../components/Modal/Modal";
 import { BeatLoader } from "react-spinners";
 
 function HomePage() {
+ 
   const [activeBtnFilter, setActiveBtnFilter] = useState(0);
   const [filterSelected, setFilterSelected] = useState("Brightness");
   const [previewImage, setPreviewImage] = useState("");
@@ -11,7 +12,8 @@ function HomePage() {
   const [valueSlider, setValueSlider]: any = useState(100);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [messageError, setMessageError] = useState('')
+  const [messageError, setMessageError] = useState("");
+  const [openResetFilter, setOpenResetFilter] = useState(false);
   const [optionApplyFilter, setOptionApplyFilter]: any = useState({
     Brightness: 100,
     Saturation: 100,
@@ -53,6 +55,7 @@ function HomePage() {
         flipVertical: optionRotate.flipVertical === 1 ? -1 : 1,
       });
     }
+    setOpenResetFilter(true)
   };
   const handleClickResetFilters = () => {
     setOptionApplyFilter({
@@ -66,6 +69,7 @@ function HomePage() {
     setActiveBtnFilter(0);
     setValueSlider(100);
     setOpenModal(false);
+    setOpenResetFilter(false)
   };
   const handleChooseImage = () => {
     const inputChooseImage = document.querySelector(
@@ -90,6 +94,7 @@ function HomePage() {
       [filterSelected]: e.target.value,
     };
     setOptionApplyFilter(newValueSlider);
+    setOpenResetFilter(true)
   };
   const handleClickSaveImage = () => {
     const canvas = document.createElement("canvas");
@@ -116,6 +121,7 @@ function HomePage() {
     link.click();
   };
 
+
   useEffect(() => {
     if (!previewImage) {
       setDisableControlEdit(true);
@@ -123,7 +129,6 @@ function HomePage() {
       setDisableControlEdit(false);
     }
   }, [previewImage]);
-
   return (
     <div className="bg-blue-100 w-full min-h-[100vh] max-w-screen-2xl flex justify-center items-center ">
       <section className=" w-[95%] lg:w-[65%] bg-white rounded-md shadow-lg shadow-indigo-500/40 p-5 my-2 ">
@@ -197,8 +202,13 @@ function HomePage() {
           <div className="h-[300px] lg:w-[65%] lg:h-[300px] flex justify-center items-center border border-gray-300 rounded-md overflow-hidden">
             {loading ? (
               <BeatLoader color="#3B82F6" loading={loading} />
+            ) : messageError ? (
+              <>
+                {" "}
+                <i className="bx bxs-error text-lg text-red-500 mx-2"></i>{" "}
+                <p className="text-sm"> {messageError}</p>{" "}
+              </>
             ) : (
-              messageError ? <> <i className='bx bxs-error text-lg text-red-500 mx-2'></i> <p className="text-sm"> {messageError}</p> </> :
               <img
                 src={previewImage || "/src/assets/no-image-icon.jpg"}
                 alt=""
@@ -215,7 +225,7 @@ function HomePage() {
           <Button
             title="Reset Filters"
             styleBtn={`${
-              disableControlEdit ? "opacity-[0.4] pointer-events-none" : ""
+              openResetFilter ? ""  : "opacity-[0.4] pointer-events-none"
             } border border-red-500 hover:bg-red-500 hover:text-white text-xs text-red-500 w-full md:w-[130px] py-3 rounded-sm transition ease-in-out delay-100`}
             onClick={() => setOpenModal(true)}
             isSlected={false}
@@ -227,18 +237,19 @@ function HomePage() {
               id=""
               className="inputChooseImage hidden"
               onChange={(e: any) => {
-                const image = e.target.files[0]
-                setLoading(true)
-                setTimeout(()=>{
-                  setLoading(false)
-                },1000)
-                if(!image.name.match(/\.(jpg|jpeg|png|gif)$/)){
-                  setMessageError('Please choose a valid image')
-                  return
+                const image = e.target.files[0];
+                setLoading(true);
+                setTimeout(() => {
+                  setLoading(false);
+                }, 1000);
+                if (!image.name.match(/\.(jpg|jpeg|png|gif)$/)) {
+                  setMessageError("Please choose a valid image");
+                  setDisableControlEdit(true);
+                  return;
                 }
-                setMessageError('')
+                setMessageError("");
                 setPreviewImage(URL.createObjectURL(image));
-               
+                setDisableControlEdit(false);
               }}
             />
             <Button
