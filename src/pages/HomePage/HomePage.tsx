@@ -210,7 +210,7 @@ function HomePage() {
               </>
             ) : (
               <img
-                src={previewImage || "/src/assets/no-image-icon.jpg"}
+                src={previewImage || "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"}
                 alt=""
                 className="preview-img w-full h-full object-contain"
                 style={{
