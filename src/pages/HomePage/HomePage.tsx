@@ -191,11 +191,11 @@ function HomePage() {
               </div>
             </div>
           </div>
-          <div className="h-[300px] lg:w-[65%] lg:h-[300px] border border-gray-300 rounded-md">
+          <div className="h-[300px] lg:w-[65%] lg:h-[300px] border border-gray-300 rounded-md overflow-hidden">
             <img
               src={previewImage || "/src/assets/no-image-icon.jpg"}
               alt=""
-              className="preview-img w-full h-full object-contain"
+              className="preview-img w-full h-full object-cover"
               style={{
                 filter: `brightness(${optionApplyFilter.Brightness}%) saturate(${optionApplyFilter.Saturation}%) invert(${optionApplyFilter.Inversion}%) grayscale(${optionApplyFilter.Grayscale}%)`,
                 transform: `rotate(${optionRotate.rotate}deg) scale(${optionRotate.flipHorizontal},${optionRotate.flipVertical})`,
