@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Button from "../../components/Button/Button";
 import Modal from "../../components/Modal/Modal";
+import { BeatLoader } from "react-spinners";
 
 function HomePage() {
   const [activeBtnFilter, setActiveBtnFilter] = useState(0);
@@ -8,7 +9,9 @@ function HomePage() {
   const [previewImage, setPreviewImage] = useState("");
   const [disableControlEdit, setDisableControlEdit] = useState(false);
   const [valueSlider, setValueSlider]: any = useState(100);
-  const [openModal,setOpenModal] = useState(false)
+  const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [messageError, setMessageError] = useState('')
   const [optionApplyFilter, setOptionApplyFilter]: any = useState({
     Brightness: 100,
     Saturation: 100,
@@ -62,7 +65,7 @@ function HomePage() {
     setFilterSelected("Brightness");
     setActiveBtnFilter(0);
     setValueSlider(100);
-    setOpenModal(false)
+    setOpenModal(false);
   };
   const handleChooseImage = () => {
     const inputChooseImage = document.querySelector(
@@ -124,7 +127,7 @@ function HomePage() {
   return (
     <div className="bg-blue-100 w-full min-h-[100vh] max-w-screen-2xl flex justify-center items-center ">
       <section className=" w-[95%] lg:w-[65%] bg-white rounded-md shadow-lg shadow-indigo-500/40 p-5 my-2 ">
-        <h3 className="text-sm font-semibold ">Easy Image Editor</h3>
+        <h3 className="text-sm font-semibold ">EZ Image Editor</h3>
         <div className="flex flex-col-reverse lg:flex-row gap-3 w-[100%] my-3">
           <div
             className={` ${
@@ -191,16 +194,21 @@ function HomePage() {
               </div>
             </div>
           </div>
-          <div className="h-[300px] lg:w-[65%] lg:h-[300px] border border-gray-300 rounded-md overflow-hidden">
-            <img
-              src={previewImage || "/src/assets/no-image-icon.jpg"}
-              alt=""
-              className="preview-img w-full h-full object-cover"
-              style={{
-                filter: `brightness(${optionApplyFilter.Brightness}%) saturate(${optionApplyFilter.Saturation}%) invert(${optionApplyFilter.Inversion}%) grayscale(${optionApplyFilter.Grayscale}%)`,
-                transform: `rotate(${optionRotate.rotate}deg) scale(${optionRotate.flipHorizontal},${optionRotate.flipVertical})`,
-              }}
-            />
+          <div className="h-[300px] lg:w-[65%] lg:h-[300px] flex justify-center items-center border border-gray-300 rounded-md overflow-hidden">
+            {loading ? (
+              <BeatLoader color="#3B82F6" loading={loading} />
+            ) : (
+              messageError ? <> <i className='bx bxs-error text-lg text-red-500 mx-2'></i> <p className="text-sm"> {messageError}</p> </> :
+              <img
+                src={previewImage || "/src/assets/no-image-icon.jpg"}
+                alt=""
+                className="preview-img w-full h-full object-contain"
+                style={{
+                  filter: `brightness(${optionApplyFilter.Brightness}%) saturate(${optionApplyFilter.Saturation}%) invert(${optionApplyFilter.Inversion}%) grayscale(${optionApplyFilter.Grayscale}%)`,
+                  transform: `rotate(${optionRotate.rotate}deg) scale(${optionRotate.flipHorizontal},${optionRotate.flipVertical})`,
+                }}
+              />
+            )}
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center">
@@ -209,7 +217,7 @@ function HomePage() {
             styleBtn={`${
               disableControlEdit ? "opacity-[0.4] pointer-events-none" : ""
             } border border-red-500 hover:bg-red-500 hover:text-white text-xs text-red-500 w-full md:w-[130px] py-3 rounded-sm transition ease-in-out delay-100`}
-            onClick={()=> setOpenModal(true)}
+            onClick={() => setOpenModal(true)}
             isSlected={false}
           />
           <div className="w-full md:w-[270px]">
@@ -219,7 +227,18 @@ function HomePage() {
               id=""
               className="inputChooseImage hidden"
               onChange={(e: any) => {
-                setPreviewImage(URL.createObjectURL(e.target.files[0]));
+                const image = e.target.files[0]
+                setLoading(true)
+                setTimeout(()=>{
+                  setLoading(false)
+                },1000)
+                if(!image.name.match(/\.(jpg|jpeg|png|gif)$/)){
+                  setMessageError('Please choose a valid image')
+                  return
+                }
+                setMessageError('')
+                setPreviewImage(URL.createObjectURL(image));
+               
               }}
             />
             <Button
@@ -240,13 +259,13 @@ function HomePage() {
         </div>
       </section>
       <Modal
-        onOpen ={openModal}
+        onOpen={openModal}
         title=" Are you sure you want to reset everything?"
         onCancel={() => {
-          setOpenModal(false)
+          setOpenModal(false);
         }}
         onAccept={() => {
-          handleClickResetFilters()
+          handleClickResetFilters();
         }}
       />
     </div>
