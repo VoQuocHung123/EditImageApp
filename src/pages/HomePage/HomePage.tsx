@@ -150,7 +150,7 @@ function HomePage() {
                       <Button
                         title={item}
                         styleBtn="ct-hover-btn border border-gray-300 text-xs text-gray-500 w-[45%] lg:w-[125px] py-2 rounded-sm"
-                        onClick={(e) => handleClickFilters(e, index)}
+                        onClick={() => handleClickFilters(index, item)}
                         isSlected={activeBtnFilter === index ? true : false}
                         key={index}
                       />
@@ -190,7 +190,7 @@ function HomePage() {
                     <Button
                       title={item}
                       styleBtn="ct-hover-btn border border-gray-300 text-xs text-gray-500 w-[150px] text-lg lg:w-[100px] lg:text-sm py-2 rounded-sm"
-                      onClick={(e) => handleClickRotate(e)}
+                      onClick={() => handleClickRotate(index)}
                       isSlected={false}
                       key={index}
                     />
@@ -210,7 +210,7 @@ function HomePage() {
               </>
             ) : (
               <img
-                src={previewImage || "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"}
+                src={previewImage || "/src/assets/no-image-icon.jpg"}
                 alt=""
                 className="preview-img w-full h-full object-contain"
                 style={{
