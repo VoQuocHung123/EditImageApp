@@ -25,7 +25,7 @@ function HomePage() {
     flipVertical: 1,
     flipHorizontal: 1,
   });
-  const handleClickFilters = (e: any, index: number, item: any) => {
+  const handleClickFilters = (index: number, item: any) => {
     setActiveBtnFilter(index);
     setFilterSelected(item);
     ["Brightness", "Saturation", "Inversion", "Grayscale"].forEach(
@@ -36,7 +36,7 @@ function HomePage() {
       }
     );
   };
-  const handleClickRotate = (e: any, index: number, item: any) => {
+  const handleClickRotate = (index: number) => {
     if (index === 0) {
       setOptionRotate({
         ...optionRotate,
@@ -150,7 +150,7 @@ function HomePage() {
                       <Button
                         title={item}
                         styleBtn="ct-hover-btn border border-gray-300 text-xs text-gray-500 w-[45%] lg:w-[125px] py-2 rounded-sm"
-                        onClick={(e) => handleClickFilters(e, index, item)}
+                        onClick={(e) => handleClickFilters(e, index)}
                         isSlected={activeBtnFilter === index ? true : false}
                         key={index}
                       />
@@ -190,7 +190,7 @@ function HomePage() {
                     <Button
                       title={item}
                       styleBtn="ct-hover-btn border border-gray-300 text-xs text-gray-500 w-[150px] text-lg lg:w-[100px] lg:text-sm py-2 rounded-sm"
-                      onClick={(e) => handleClickRotate(e, index, item)}
+                      onClick={(e) => handleClickRotate(e)}
                       isSlected={false}
                       key={index}
                     />
